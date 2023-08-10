@@ -1,0 +1,33 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+protobuf = "*"
+sqlalchemy = "2.0.18"
+psycopg2-binary = "2.9.6"
+pip = "*"
+setuptools = "*"
+datapipeline-ingestion = {ref = "84119ac8e41c61f34d7e18943d0a8899bdd5c45a", git = "ssh://git@github.com/civicfeed/datapipeline-ingestion"}
+reactivex = "*"
+aiokafka = "*"
+confluent-kafka = "2.1.0"
+requests = "*"
+boto3 = "*"
+pandas = "*"
+numpy = "*"
+s3fs = "2023.6.0"
+opensearch-py = "*"
+
+[dev-packages]
+doppler-env = "*"
+pytest = "*"
+pytest-asyncio = "*"
+pytest-mock = "*"
+pytest-mock-resources = "*"
+python-on-whales = "*"
+pytest-timeout = "*"
+
+[requires]
+python_version = "3.10"
