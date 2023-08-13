@@ -1,67 +1,88 @@
 import os
 
-from langchain.text_splitter import CharacterTextSplitter
+from langchain.text_splitter import (
+    RecursiveCharacterTextSplitter,
+)
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationalRetrievalChain
-from langchain.vectorstores import DeepLake
+from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.document_loaders import TextLoader
+from langchain.document_loaders import (
+    DirectoryLoader
+)
 
+from langchain.chains import RetrievalQA
 
 # Keys
 os.environ['OPENAI_API_KEY'] = "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"
-os.environ["ACTIVELOOP_TOKEN"] = "eyJhbGciOiJIUzUxMiIsImlhdCI6MTY5MDkzNjA3OSwiZXhwIjoxNjkzNTI4MDE5fQ.eyJpZCI6ImdvdWRldGUifQ.zE7lPgIANl-Ok63E4K7T397F8VTNwPA-DaUHYk-4I7VZdTNFpxW65bHJ9-IGvTdHJF2lDbPa9I9vBFQBQCM75A"
+# os.environ["ACTIVELOOP_TOKEN"] = "eyJhbGciOiJIUzUxMiIsImlhdCI6MTY5MDkzNjA3OSwiZXhwIjoxNjkzNTI4MDE5fQ.eyJpZCI6ImdvdWRldGUifQ.zE7lPgIANl-Ok63E4K7T397F8VTNwPA-DaUHYk-4I7VZdTNFpxW65bHJ9-IGvTdHJF2lDbPa9I9vBFQBQCM75A"
+
+'''
+Data Loader
+
+Extracts custom data from a directory and loads it into a list of Document objects.
+'''
+print("Loading data...")
 
 root_dir = "./repos/os_writer"
-
-print("Extracting repository files...")
-docs = []
-for dirpath, dirnames, filenames in os.walk(root_dir):
-  for file in filenames:
-    if file.endswith(".py") and "/.venv/" not in dirpath:
-      try:
-          loader = TextLoader(
-            os.path.join(
-              dirpath,
-              file
-            ),
-            encoding="utf-8"
-          )
-          docs.extend(loader.load_and_split())
-      except Exception as e:
-        pass
-
-print("Chunking files...")
-text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=0)
-texts = text_splitter.split_documents(docs)
+loader = DirectoryLoader(root_dir, glob="**/*.py", show_progress=True)
+files = loader.load()
+print('len(files): ', len(files))
 
 
-print("Creating vectorstore...")
-dataset_path = "hub://goudete/readme-writer-os-writer"
-# Creating new vectorstore
-db = DeepLake.from_documents(
-    texts,
-    dataset_path=dataset_path,
-    embedding=OpenAIEmbeddings()
-)
+'''
+Data Transformer
 
-retriever = db.as_retriever()
-retriever.search_kwargs["distance_metric"] = "cos"
-retriever.search_kwargs["fetch_k"] = 100
-retriever.search_kwargs["maximal_marginal_relevance"] = True
-retriever.search_kwargs["k"] = 10
+Transforms documents into smaller chunks that can fit into the models context window.
+When dealing with long pieces of text, it is often necessary to split the text into chunks.
+
+At a high level, text splitters work as following:
+
+    - Split the text up into small, semantically meaningful chunks (often sentences).
+    - Start combining these small chunks into a larger chunk until you reach a certain size (as measured by some function).
+    - Once you reach that size, make that chunk its own piece of text and then start creating a new chunk of text with some overlap (to keep context between chunks).
+    - That means there are two different axes along which you can customize your text splitter:
+        - How the text is split
+        - How the chunk size is measured
+
+Notes:
+For my use case, I need to split documents by class and function groups.
+
+Reference:
+Context aware text splitting: https://python.langchain.com/docs/use_cases/question_answering/how_to/document-context-aware-QA
+
+'''
+# print("Transforming data...")
+# text_splitter = RecursiveCharacterTextSplitter(
+#     chunk_size = 200,
+#     chunk_overlap  = 20,
+#     length_function = len,
+# )
+# all_splits = text_splitter.create_documents([
+#     file.page_content for file in files
+# ])
 
 
-available_models = {
-    "ada": "ada",
-    "3.5": "gpt-3.5-turbo",
-    "4": "gpt-4",
-}
-model = ChatOpenAI(model_name=available_models["3.5"])
-qa = ConversationalRetrievalChain.from_llm(model, retriever=retriever)
+'''
+Data Retriever
 
-question = "Write a ReadMe with a detailed Quick Start section about how to run the project."
+A retriever is an interface that returns documents given an unstructured query.
+It is more general than a vector store. A retriever does not need to be able to 
+store documents, only to return (or retrieve) it. Vector stores can be used as 
+the backbone of a retriever, but there are other types of retrievers as well.
 
-result = qa({"question": question, "chat_history": []})
+'''
+# print("Creating vectorstore...")
+# vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings())
 
-print(f"**Answer**: {result['answer']} \n")
+# llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+
+# question = "What is the provided context?"
+
+# qa_chain = RetrievalQA.from_chain_type(
+#     llm,
+#     retriever=vectorstore.as_retriever(),
+# )
+
+# result = qa_chain.run(question)
+
+# print(result)
