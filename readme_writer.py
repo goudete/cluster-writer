@@ -11,8 +11,8 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 
 # Keys
-os.environ['OPENAI_API_KEY'] = "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"
-# os.environ["ACTIVELOOP_TOKEN"] = "eyJhbGciOiJIUzUxMiIsImlhdCI6MTY5MDkzNjA3OSwiZXhwIjoxNjkzNTI4MDE5fQ.eyJpZCI6ImdvdWRldGUifQ.zE7lPgIANl-Ok63E4K7T397F8VTNwPA-DaUHYk-4I7VZdTNFpxW65bHJ9-IGvTdHJF2lDbPa9I9vBFQBQCM75A"
+os.environ['OPENAI_API_KEY'] = ""
+# os.environ["ACTIVELOOP_TOKEN"] = ""
 
 '''
 Data Loader
