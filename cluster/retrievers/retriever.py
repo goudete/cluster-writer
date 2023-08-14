@@ -6,13 +6,7 @@ class Retriever():
         self.model = model
         self.chain = chain
 
-    @staticmethod
-    def instance(vectorstore):
-        return Retriever(
-            vectorstore=vectorstore
-        )
-
-    def retrieve(self, query):
+    def retrieve(self):
         retriever = self.vectorstore.as_retriever()
         retriever.search_kwargs['distance_metric'] = 'cos'
         retriever.search_kwargs['fetch_k'] = 100

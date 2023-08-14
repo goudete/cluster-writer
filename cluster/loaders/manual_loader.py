@@ -8,9 +8,11 @@ class ManualLoader():
         self.root_dir = root_dir
 
     def load(self):
+        print('ROOT DIR', self.root_dir)
         docs = []
         for dirpath, dirnames, filenames in os.walk(self.root_dir):
             for file in filenames:
+                print('FILE', file)
                 try:
                     loader = TextLoader(
                         os.path.join(dirpath, file),
@@ -20,4 +22,5 @@ class ManualLoader():
                 except Exception as e:
                     pass
 
+        print('DOCS IN MANUAL LOADER', docs)
         return docs

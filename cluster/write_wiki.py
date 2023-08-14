@@ -12,11 +12,12 @@ from loaders.manual_loader import ManualLoader
 from transformers.transformer import Transformer
 from retrievers.retriever import Retriever
 from vectorstores.deep_lake import DeepLakeProvider
+from config.wiki_writer_config import AppConfig
 
 
 def main():
     root_dir = '../repos/os_writer'
-    dataset_path = "hub://goudete/readme_writer_vectorstore_path"
+    dataset_path = "hub://goudete/wiki_writer_dataset"
 
     writer = WikiWriter(
         loader=ManualLoader(
@@ -29,17 +30,24 @@ def main():
             ),
             vectorstore=DeepLakeProvider.instance(
                 dataset_path=dataset_path,
-                embeddings=OpenAIEmbeddings(),
+                embeddings=OpenAIEmbeddings(
+                    openai_api_key=AppConfig.OPENAI_API_KEY,
+                ),
                 read_only=False
             )
         ),
-        retriever=Retriever.instance(
+        retriever=Retriever(
             vectorstore=DeepLakeProvider.instance(
                 dataset_path=dataset_path,
-                embeddings=OpenAIEmbeddings(),
+                embeddings=OpenAIEmbeddings(
+                    openai_api_key=AppConfig.OPENAI_API_KEY,
+                ),
                 read_only=True
             ),
-            model=ChatOpenAI(model='gpt-3.5-turbo'), # switch to 'gpt-4'
+            model=ChatOpenAI(
+                model='gpt-3.5-turbo',
+                openai_api_key=AppConfig.OPENAI_API_KEY
+            ),
             chain=ConversationalRetrievalChain
         ),
     )

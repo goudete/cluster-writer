@@ -7,9 +7,6 @@ class WikiWriter:
 
     def write(self):
         data = self.loader.load()
-        transformed_data = self.transformer.transform(data)
-        retrieved_data = self.retriever.retrieve(transformed_data)
-
-        print("Wiki: ", retrieved_data)
-
-        return
+        print('DATA', data)
+        self.transformer.transform(data)
+        self.retriever.retrieve()
