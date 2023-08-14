@@ -6,9 +6,7 @@ from langchain.text_splitter import (
 from langchain.chat_models import ChatOpenAI
 from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.document_loaders import (
-    DirectoryLoader
-)
+
 
 from langchain.chains import RetrievalQA
 
@@ -21,12 +19,6 @@ Data Loader
 
 Extracts custom data from a directory and loads it into a list of Document objects.
 '''
-print("Loading data...")
-
-root_dir = "./repos/os_writer"
-loader = DirectoryLoader(root_dir, glob="**/*.py", show_progress=True)
-files = loader.load()
-print('len(files): ', len(files))
 
 
 '''
