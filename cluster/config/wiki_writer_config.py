@@ -15,8 +15,8 @@ def _parse_bool(val: Union[str, bool]) -> bool:  # pylint: disable=E1136
 
 class AppConfig:
     # alphabetize fields for readability
-    OPENAI_API_KEY: str = "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"
-    ACTIVE_LOOP_TOKEN: str = "eyJhbGciOiJIUzUxMiIsImlhdCI6MTY5MDkzNjA3OSwiZXhwIjoxNjkzNTI4MDE5fQ.eyJpZCI6ImdvdWRldGUifQ.zE7lPgIANl-Ok63E4K7T397F8VTNwPA-DaUHYk-4I7VZdTNFpxW65bHJ9-IGvTdHJF2lDbPa9I9vBFQBQCM75A"
+    OPENAI_API_KEY: str = ""
+    ACTIVE_LOOP_TOKEN: str = ""
 
     """
     Map environment variables to class fields according to these rules:
