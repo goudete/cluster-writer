@@ -21,3 +21,6 @@ class DeepLakeProvider():
         print('DOCS', docs)
         self.db.add_documents(docs)
         return
+    
+    def as_retriever(self):
+        return self.db.as_retriever()

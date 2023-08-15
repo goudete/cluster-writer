@@ -1,12 +1,10 @@
 
 class WikiWriter:
-    def __init__(self, loader, transformer, retriever):
+    def __init__(self, loader, transformer):
         self.loader = loader
         self.transformer = transformer
-        self.retriever = retriever
+        # self.retriever = retriever
 
     def write(self):
         data = self.loader.load()
-        print('DATA', data)
         self.transformer.transform(data)
-        self.retriever.retrieve()
